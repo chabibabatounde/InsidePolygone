@@ -1,0 +1,106 @@
+function isInside(polygon, point) 
+{
+    if (polygon.length < 3){
+    	//si le polygone n'est pas constitué de 3 points au moins, on renvoi false
+    	//car un segment ne peut être considéré commme un polygone
+        return false; 
+    }
+    else{
+    	//Si on a un polygone valide (nombre de sommet >= 3)
+    	//Ici on compte le nombre de fois
+        var demiDroite = {lat:Infinity, lng: point.lng}; 
+        var nombreIntersection = 0;
+        var i = 0; 
+        do{
+            var next = (i+1)%polygon.length;  
+            if (intersect(polygon[i], polygon[next], point, demiDroite)) 
+            { 
+                if (orientation(polygon[i], point, polygon[next]) == 0){
+                    return onSegment(polygon[i], point, polygon[next]); 
+                } 
+                nombreIntersection++; 
+            } 
+            i = next; 
+        }while (i != 0); 
+        // Return true if nombreIntersection is odd, false otherwise 
+        return (nombreIntersection%2 == 1);  // Same as (nombreIntersection%2 == 1)
+    }
+}
+
+
+
+
+
+    function onSegment(pointA, pointB, pointV) 
+    { 
+        if (pointV.lat<= maxValue(pointA.lat, pointB.lat) && pointV.lat >= minValue(pointA.lat, pointB.lat) && pointV.lng<= maxValue(pointA.lng, pointB.lng) && pointV.lng >= minValue(pointA.lng, pointB.lng)){
+            return true; 
+        }else{
+            return false; 
+        }
+    }
+    
+    function maxValue(val1, val2){
+        if(val1 > val2){
+            return val1;
+        }else{
+            return val2;
+        }
+    }
+
+    function minValue(val1, val2){
+        if(val1 < val2){
+            return val1;
+        }else{
+            return val2;
+        }
+    }
+
+    function orientation(pointA, pointB, pointV) 
+    { 
+        var val = (pointV.lng - pointA.lng) * (pointB.lat - pointV.lat) - (pointV.lat - pointA.lat) * (pointB.lng - pointV.lng); 
+        if (val == 0) {
+            return 0; 
+        }
+        if (val > 0) {
+            return 1;
+        }else{
+            return 2; 
+        }
+    }
+
+    function intersect(pointA, pointC, pointB, pointD) 
+    { 
+        
+        let o1 = orientation(pointA, pointC, pointB); 
+        let o2 = orientation(pointA, pointC, pointD); 
+        let o3 = orientation(pointB, pointD, pointA); 
+        let o4 = orientation(pointB, pointD, pointC); 
+    
+        if (o1 != o2 && o3 != o4)
+            return true; 
+    
+        if (o1 == 0 && onSegment(pointA, pointB, pointC)) return true; 
+    
+        if (o2 == 0 && onSegment(pointA, pointD, pointC)) return true; 
+    
+        if (o3 == 0 && onSegment(pointB, pointA, pointD)) return true; 
+    
+        if (o4 == 0 && onSegment(pointB, pointC, pointD)) return true; 
+    
+        return false;
+    }
+
+    
+    
+    
+    /*
+    console.log(isInside(polygon, {lat:42.2869932280433, lng:9.150903709863254}));
+    console.log(isInside(polygon, {lat:36.184712, lng:-1.662190}));
+    console.log(isInside(polygon, {lat:42.255635, lng:9.141162}));
+    */
+    
+
+    
+     
+</script>
